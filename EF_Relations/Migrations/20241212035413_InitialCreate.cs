@@ -13,74 +13,75 @@ namespace EF_Relations.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Taxpayers",
+                name: "Blogs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Taxpayers", x => x.Id);
+                    table.PrimaryKey("PK_Blogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaxRecords",
+                name: "Posts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TaxCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TotalTaxPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TaxPayerID = table.Column<int>(type: "int", nullable: false)
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BlogId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaxRecords", x => x.Id);
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TaxRecords_Taxpayers_TaxPayerID",
-                        column: x => x.TaxPayerID,
-                        principalTable: "Taxpayers",
+                        name: "FK_Posts_Blogs_BlogId",
+                        column: x => x.BlogId,
+                        principalTable: "Blogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
-                table: "Taxpayers",
-                columns: new[] { "Id", "FullName" },
+                table: "Blogs",
+                columns: new[] { "Id", "Title" },
                 values: new object[,]
                 {
-                    { 1, "Ali" },
-                    { 2, "Reza" },
-                    { 3, "Sara" }
+                    { 1, "BugandFix" },
+                    { 2, "Travel Diaries" },
+                    { 3, "Food Adventures" }
                 });
 
             migrationBuilder.InsertData(
-                table: "TaxRecords",
-                columns: new[] { "Id", "TaxCode", "TaxPayerID", "TotalTaxPaid" },
+                table: "Posts",
+                columns: new[] { "Id", "BlogId", "Content" },
                 values: new object[,]
                 {
-                    { 1, "TAX12345", 1, 5000.00m },
-                    { 2, "TAX67890", 2, 7500.00m },
-                    { 3, "TAX54321", 3, 3000.00m }
+                    { 1, 1, "Latest in AI" },
+                    { 2, 1, "Quantum Computing" },
+                    { 3, 2, "Exploring Japan" },
+                    { 4, 2, "Backpacking Europe" },
+                    { 5, 3, "Best Street Foods" },
+                    { 6, 3, "Gourmet Experiences" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaxRecords_TaxPayerID",
-                table: "TaxRecords",
-                column: "TaxPayerID",
-                unique: true);
+                name: "IX_Posts_BlogId",
+                table: "Posts",
+                column: "BlogId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TaxRecords");
+                name: "Posts");
 
             migrationBuilder.DropTable(
-                name: "Taxpayers");
+                name: "Blogs");
         }
     }
 }

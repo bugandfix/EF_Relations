@@ -2,19 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace EF_Relations.Migrations
 {
-    [DbContext(typeof(OnetoOneAppDbContext))]
-    [Migration("20241211124253_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(OnetoManyAppDbContext))]
+    partial class OnetoManyAppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +20,7 @@ namespace EF_Relations.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TaxPayer", b =>
+            modelBuilder.Entity("Blog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,32 +28,32 @@ namespace EF_Relations.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Taxpayers");
+                    b.ToTable("Blogs");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            FullName = "Ali"
+                            Title = "BugandFix"
                         },
                         new
                         {
                             Id = 2,
-                            FullName = "Reza"
+                            Title = "Travel Diaries"
                         },
                         new
                         {
                             Id = 3,
-                            FullName = "Sara"
+                            Title = "Food Adventures"
                         });
                 });
 
-            modelBuilder.Entity("TaxRecord", b =>
+            modelBuilder.Entity("Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,61 +61,71 @@ namespace EF_Relations.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("TaxCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TaxPayerID")
+                    b.Property<int>("BlogId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalTaxPaid")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TaxPayerID")
-                        .IsUnique();
+                    b.HasIndex("BlogId");
 
-                    b.ToTable("TaxRecords");
+                    b.ToTable("Posts");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            TaxCode = "TAX12345",
-                            TaxPayerID = 1,
-                            TotalTaxPaid = 5000.00m
+                            BlogId = 1,
+                            Content = "Latest in AI"
                         },
                         new
                         {
                             Id = 2,
-                            TaxCode = "TAX67890",
-                            TaxPayerID = 2,
-                            TotalTaxPaid = 7500.00m
+                            BlogId = 1,
+                            Content = "Quantum Computing"
                         },
                         new
                         {
                             Id = 3,
-                            TaxCode = "TAX54321",
-                            TaxPayerID = 3,
-                            TotalTaxPaid = 3000.00m
+                            BlogId = 2,
+                            Content = "Exploring Japan"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BlogId = 2,
+                            Content = "Backpacking Europe"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BlogId = 3,
+                            Content = "Best Street Foods"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BlogId = 3,
+                            Content = "Gourmet Experiences"
                         });
                 });
 
-            modelBuilder.Entity("TaxRecord", b =>
+            modelBuilder.Entity("Post", b =>
                 {
-                    b.HasOne("TaxPayer", "Taxpayer")
-                        .WithOne("Taxrecord")
-                        .HasForeignKey("TaxRecord", "TaxPayerID")
+                    b.HasOne("Blog", "Blog")
+                        .WithMany("Posts")
+                        .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Taxpayer");
+                    b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("TaxPayer", b =>
+            modelBuilder.Entity("Blog", b =>
                 {
-                    b.Navigation("Taxrecord")
-                        .IsRequired();
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }
