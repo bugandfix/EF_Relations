@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EF_Relations.Migrations
 {
-    [DbContext(typeof(OnetoManyAppDbContext))]
-    [Migration("20241212035413_InitialCreate")]
+    [DbContext(typeof(ManytoManyAppDbContext))]
+    [Migration("20241213010917_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -23,7 +23,7 @@ namespace EF_Relations.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Blog", b =>
+            modelBuilder.Entity("EF_Relations.Models.Course", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,32 +31,32 @@ namespace EF_Relations.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Courses");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Title = "BugandFix"
+                            Name = "C#"
                         },
                         new
                         {
                             Id = 2,
-                            Title = "Travel Diaries"
+                            Name = "SQL Server"
                         },
                         new
                         {
                             Id = 3,
-                            Title = "Food Adventures"
+                            Name = "Printing"
                         });
                 });
 
-            modelBuilder.Entity("Post", b =>
+            modelBuilder.Entity("EF_Relations.Models.Student", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,71 +64,95 @@ namespace EF_Relations.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BlogId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BlogId");
-
-                    b.ToTable("Posts");
+                    b.ToTable("Students");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            BlogId = 1,
-                            Content = "Latest in AI"
+                            Name = "Ali"
                         },
                         new
                         {
                             Id = 2,
-                            BlogId = 1,
-                            Content = "Quantum Computing"
+                            Name = "Reza"
                         },
                         new
                         {
                             Id = 3,
-                            BlogId = 2,
-                            Content = "Exploring Japan"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            BlogId = 2,
-                            Content = "Backpacking Europe"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            BlogId = 3,
-                            Content = "Best Street Foods"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            BlogId = 3,
-                            Content = "Gourmet Experiences"
+                            Name = "Farhad"
                         });
                 });
 
-            modelBuilder.Entity("Post", b =>
+            modelBuilder.Entity("EF_Relations.Models.StudentCourse", b =>
                 {
-                    b.HasOne("Blog", "Blog")
-                        .WithMany("Posts")
-                        .HasForeignKey("BlogId")
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "CourseId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("StudentCourse");
+
+                    b.HasData(
+                        new
+                        {
+                            StudentId = 1,
+                            CourseId = 1
+                        },
+                        new
+                        {
+                            StudentId = 1,
+                            CourseId = 2
+                        },
+                        new
+                        {
+                            StudentId = 2,
+                            CourseId = 2
+                        },
+                        new
+                        {
+                            StudentId = 3,
+                            CourseId = 3
+                        });
+                });
+
+            modelBuilder.Entity("EF_Relations.Models.StudentCourse", b =>
+                {
+                    b.HasOne("EF_Relations.Models.Course", "Course")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Blog");
+                    b.HasOne("EF_Relations.Models.Student", "Student")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Blog", b =>
+            modelBuilder.Entity("EF_Relations.Models.Course", b =>
                 {
-                    b.Navigation("Posts");
+                    b.Navigation("StudentCourses");
+                });
+
+            modelBuilder.Entity("EF_Relations.Models.Student", b =>
+                {
+                    b.Navigation("StudentCourses");
                 });
 #pragma warning restore 612, 618
         }
